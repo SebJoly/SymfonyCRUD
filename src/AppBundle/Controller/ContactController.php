@@ -22,14 +22,21 @@ class ContactController extends Controller
      * @Route("/", name="contact_index")
      * @Method("GET")
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
 
         $contacts = $em->getRepository('AppBundle:Contact')->findAll();
 
+        $paginator = $this->get('knp_paginator');
+        $pagination = $paginator->paginate(
+            $contacts,
+            $request->query->getInt('page',1),
+            5
+        );
+
         return $this->render('contact/index.html.twig', array(
-            'contacts' => $contacts,
+            'pagination' => $pagination,
         ));
     }
 

@@ -3,6 +3,10 @@
 {% block body %}
     <h1>Contact list</h1>
 
+    {# total items count #}
+    <div class="count">
+        {{ pagination.getTotalItemCount }} contact(s)
+    </div>
     <table>
         <thead>
             <tr>
@@ -19,7 +23,9 @@
             </tr>
         </thead>
         <tbody>
-        {% for contact in contacts %}
+
+        {# table body #}
+        {% for contact in pagination %}
             <tr>
                 <td><a href="{{ path('contact_show', { 'id': contact.id }) }}">{{ contact.id }}</a></td>
                 <td>{{ contact.nom }}</td>
@@ -44,6 +50,11 @@
         {% endfor %}
         </tbody>
     </table>
+
+    {# display navigation #}
+    <div class="navigation">
+        {{ knp_pagination_render(pagination) }}
+    </div>
 
     <ul>
         <li>
