@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Mailer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -56,6 +57,16 @@ class ContactController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($contact);
             $em->flush();
+
+            // Get the handler
+            $formHandler = new ContactHandler($form, $request, $this->get('mailer'));
+            $process = $formHandler->process();
+
+            if ($process)
+            {
+                // Launch the message flash
+                $this->get('session')->setFlash('notice', 'Contact ajouté avec succès !');
+            }
 
             return $this->redirectToRoute('contact_show', array('id' => $contact->getId()));
         }
