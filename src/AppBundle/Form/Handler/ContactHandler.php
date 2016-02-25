@@ -6,6 +6,11 @@
  * Time: 10:57
  */
 
+namespace AppBundle\Form\Handler;
+
+use Symfony\Component\Form\Form;
+use Symfony\Component\HttpFoundation\Request;
+
 class ContactHandler
 {
 
@@ -35,13 +40,12 @@ class ContactHandler
         // Check the method
         if ('POST' == $this->request->getMethod())
         {
-            // Bind value with form
-            $this->form->bindRequest($this->request);
-
-            $data = $this->form->getData();
-            $this->onSuccess($data);
-
-            return true;
+            if ($this->form->isSubmitted() && $this->form->isValid())
+            {
+                $data = $this->form->getData();
+                $this->onSuccess($data);
+                return true;
+            }
         }
         return false;
     }
@@ -56,7 +60,7 @@ class ContactHandler
             ->setContentType('text/html')
             ->setSubject('New contact added !')
             ->setFrom('crud-contact@no-reply.com')
-            ->setTo('seb.joly@live.fr')
+            ->setTo('admin@crud-contact.com')
             ->setBody('New contact added !');
 
         $this->mailer->send($message);

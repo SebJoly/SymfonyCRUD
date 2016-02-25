@@ -2,13 +2,13 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Mailer;
+use AppBundle\Form\Handler\ContactHandler;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use AppBundle\Entity\Contact;
-use AppBundle\Form\ContactType;
+use AppBundle\Form\Type\ContactType;
 
 /**
  * Contact controller.
@@ -50,7 +50,7 @@ class ContactController extends Controller
     public function newAction(Request $request)
     {
         $contact = new Contact();
-        $form = $this->createForm('AppBundle\Form\ContactType', $contact);
+        $form = $this->createForm('AppBundle\Form\Type\ContactType', $contact);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -61,12 +61,6 @@ class ContactController extends Controller
             // Get the handler
             $formHandler = new ContactHandler($form, $request, $this->get('mailer'));
             $process = $formHandler->process();
-
-            if ($process)
-            {
-                // Launch the message flash
-                $this->get('session')->setFlash('notice', 'Contact ajouté avec succès !');
-            }
 
             return $this->redirectToRoute('contact_show', array('id' => $contact->getId()));
         }
